@@ -57,7 +57,8 @@ function SignUp() {
           </Link>
           <p className="text-sm mt-5">
             This page is made for Practice in making a good web, You can sign up
-            with your google account.
+            with your username, email and password or also you can sign up with
+            google account.
           </p>
         </div>
         {/* right side */}
