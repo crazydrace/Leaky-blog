@@ -57,3 +57,45 @@ export const signin = async (req, res, next) => {
     next(error);
   }
 };
+
+export const google = async (req, res, next) => {
+  const { email, name, googlePhotoUrl } = req.body;
+
+  if (!email || !name || !googlePhotoUrl) {
+    return next(errorHandler(400, "Missing required fields."));
+  }
+
+  try {
+    let user = await User.findOne({ email });
+
+    if (user) {
+      // User exists; return JWT
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+      const { password, ...userData } = user._doc;
+      return res
+        .status(200)
+        .cookie("access_token", token, { httpOnly: true })
+        .json(userData);
+    }
+
+    // Create a new user
+    const randomString = Math.random().toString(36).slice(-8);
+    const newUser = new User({
+      username: name.toLowerCase().replace(/\s/g, "") + randomString,
+      email,
+      password: bcryptjs.hashSync(randomString, 10), // Password unused
+      profilePicture: googlePhotoUrl,
+    });
+
+    user = await newUser.save();
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+    const { password, ...userData } = user._doc;
+
+    return res
+      .status(200)
+      .cookie("access_token", token, { httpOnly: true })
+      .json(userData);
+  } catch (error) {
+    next(error);
+  }
+};
