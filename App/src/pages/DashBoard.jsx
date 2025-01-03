@@ -1,5 +1,9 @@
 function DashBoard() {
-  return <div>DashBoard</div>;
+  return (
+    <div>
+      <h1>Dashboard</h1>
+    </div>
+  );
 }
 
 export default DashBoard;
