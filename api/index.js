@@ -12,19 +12,23 @@ mongoose
     console.log("Database connection established");
   })
   .catch((err) => console.log(err));
+
 const app = express();
 
+// Middleware to parse JSON request bodies
 app.use(express.json());
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
-});
+// Routes
+app.use("/api/user", userRoutes); // User routes
+app.use("/api/auth", authRoutes); // Authentication routes
 
-app.use("/api/user", userRoutes);
-app.use("/api/auth", authRoutes);
-
+// Global error handler middleware
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal server error";
   res.status(statusCode).json({ success: false, statusCode, message });
+});
+
+app.listen(3000, () => {
+  console.log("Server is running on port 3000");
 });
